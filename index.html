@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>x402 Watch</title>
+    <style>
+      :root { color-scheme: light; font-family: system-ui, sans-serif; }
+      body { margin: 0 auto; max-width: 62rem; padding: 2rem 1rem 4rem; color: #172217; }
+      header { border-bottom: 3px solid #228b22; margin-bottom: 2rem; }
+      h1 { color: #228b22; margin-bottom: .25rem; }
+      .meta { color: #586358; }
+      .warning { background: #fff8df; border-left: 4px solid #d4af37; padding: .8rem 1rem; }
+      article { line-height: 1.55; }
+      a { color: #176b17; }
+      li { margin: .45rem 0; }
+      code { overflow-wrap: anywhere; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>x402 Watch</h1>
+      <p class="meta">Reviewed public research on x402 and adjacent agent-commerce signals.</p>
+    </header>
+    <main id="app">
+      <p class="warning">No approved public brief has been published yet.</p>
+    </main>
+    <script>
+      async function loadBrief() {
+        const app = document.getElementById("app");
+        const response = await fetch("data/brief.json", { cache: "no-store" });
+        if (!response.ok) return;
+        const brief = await response.json();
+        app.innerHTML = "";
+        const title = document.createElement("h2");
+        title.textContent = brief.title;
+        app.append(title);
+        const summary = document.createElement("p");
+        summary.textContent = brief.executive_summary;
+        app.append(summary);
+        const coverage = document.createElement("p");
+        coverage.className = "meta";
+        coverage.textContent = `Coverage: ${brief.coverage} · Run: ${brief.run_id}`;
+        app.append(coverage);
+        for (const section of [
+          ["Claims", brief.claims, claim => {
+            const li = document.createElement("li");
+            li.textContent = claim.claim;
+            return li;
+          }],
+          ["Open questions", brief.open_questions, question => {
+            const li = document.createElement("li");
+            li.textContent = question;
+            return li;
+          }]
+        ]) {
+          if (!section[1] || !section[1].length) continue;
+          const heading = document.createElement("h3");
+          heading.textContent = section[0];
+          app.append(heading);
+          const list = document.createElement("ul");
+          for (const item of section[1]) list.append(section[2](item));
+          app.append(list);
+        }
+        const sources = document.createElement("h3");
+        sources.textContent = "Sources";
+        app.append(sources);
+        const list = document.createElement("ul");
+        for (const source of brief.sources || []) {
+          const li = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = source.url;
+          link.textContent = source.publisher || source.url;
+          link.target = "_blank";
+          link.rel = "noopener";
+          li.append(link);
+          list.append(li);
+        }
+        app.append(list);
+      }
+      loadBrief().catch(() => {});
+    </script>
+  </body>
+</html>
