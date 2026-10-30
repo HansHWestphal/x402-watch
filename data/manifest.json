@@ -1,6 +1,11 @@
 {
   "schema_version": "1.0",
-  "publication_status": "empty",
-  "brief": null,
-  "note": "The public projection is waiting for its first explicitly approved x402 Watch publication."
+  "generated_at": "2026-10-30T18:57:56.034356+00:00",
+  "run_id": "20261030T110013.188996Z",
+  "draft_sha256": "241f9505cedde0ce2b3d0262445ffc05541b072ae5748f2f48d2bdde5ffd5d4d",
+  "coverage": "partial",
+  "brief": "data/brief.json",
+  "source_count": 13,
+  "publication_status": "approved",
+  "private_fields_excluded": true
 }
