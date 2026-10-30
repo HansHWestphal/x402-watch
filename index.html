@@ -129,7 +129,9 @@
             Each edition separates verified claims, partial coverage, open questions, and the sources behind the signal.
           </div>
         </section>
-        <p class="warning">No approved public brief has been published yet.</p>
+        <div id="brief-content">
+          <p class="warning">No approved public brief has been published yet.</p>
+        </div>
       </main>
       <footer>Human Value Exchange · Five Wealth lens · x402 Watch</footer>
     </div>
@@ -150,7 +152,7 @@
       }
 
       async function loadBrief() {
-        const app = document.getElementById("app");
+        const app = document.getElementById("brief-content");
         const response = await fetch("data/brief.json", { cache: "no-store" });
         if (!response.ok) return;
         const brief = await response.json();
