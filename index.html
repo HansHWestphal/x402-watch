@@ -3,80 +3,263 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>x402 Watch</title>
+    <meta name="description" content="Reviewed public research on x402 and adjacent agent-commerce signals.">
+    <title>x402 Watch | Human Value Exchange</title>
     <style>
-      :root { color-scheme: light; font-family: system-ui, sans-serif; }
-      body { margin: 0 auto; max-width: 62rem; padding: 2rem 1rem 4rem; color: #172217; }
-      header { border-bottom: 3px solid #228b22; margin-bottom: 2rem; }
-      h1 { color: #228b22; margin-bottom: .25rem; }
-      .meta { color: #586358; }
-      .warning { background: #fff8df; border-left: 4px solid #d4af37; padding: .8rem 1rem; }
-      article { line-height: 1.55; }
-      a { color: #176b17; }
-      li { margin: .45rem 0; }
+      :root {
+        color-scheme: light;
+        --ink: #10231e;
+        --muted: #536159;
+        --forest: #24483a;
+        --forest-dark: #10231e;
+        --gold: #d7a85b;
+        --gold-dark: #b27a32;
+        --cream: #f6f3ec;
+        --paper: #fff;
+        --line: #d8ddd5;
+        --sage: #dce8df;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--cream);
+        color: var(--ink);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      a { color: var(--forest); }
+      a:hover { color: var(--gold-dark); }
+      a:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+      .shell { max-width: 72rem; margin: 0 auto; padding: 1.25rem 1.25rem 4rem; }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: .75rem 0 1.25rem;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand { color: var(--forest-dark); font-size: .82rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+      .brand span { color: var(--gold-dark); }
+      .topbar a { font-size: .9rem; font-weight: 700; text-decoration: none; }
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(15rem, .7fr);
+        gap: 2rem;
+        align-items: end;
+        padding: 4.5rem 0 3rem;
+      }
+      .eyebrow { color: var(--gold-dark); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+      h1, h2, h3 { line-height: 1.15; margin: 0; }
+      h1 { max-width: 50rem; color: var(--forest-dark); font-size: clamp(2.5rem, 7vw, 5.5rem); letter-spacing: -.055em; }
+      .hero-copy { max-width: 42rem; color: var(--muted); font-size: 1.12rem; margin: 1.25rem 0 0; }
+      .hero-note {
+        border-left: 4px solid var(--gold);
+        color: var(--forest-dark);
+        font-size: .94rem;
+        padding: 1rem 0 1rem 1.25rem;
+      }
+      .hero-note strong { display: block; font-size: 1.35rem; margin-bottom: .35rem; }
+      .status-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
+      .pill { border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: .78rem; padding: .38rem .75rem; }
+      .pill strong { color: var(--forest); }
+      .section { margin-top: 2rem; }
+      .section-heading { align-items: end; display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+      .section-heading h2 { color: var(--forest-dark); font-size: clamp(1.55rem, 3vw, 2.2rem); }
+      .section-heading p { color: var(--muted); font-size: .9rem; margin: 0; }
+      .card {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        box-shadow: 0 1rem 2.5rem rgba(16, 35, 30, .06);
+        padding: clamp(1.25rem, 3vw, 2rem);
+      }
+      .summary { border-top: 5px solid var(--gold); font-size: 1.14rem; }
+      .summary p, .relevance p { margin: 0; }
+      .wealth-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: .85rem; }
+      .wealth-card { background: var(--sage); border: 1px solid #cbd5ce; border-radius: .8rem; padding: 1.15rem; }
+      .wealth-card h3 { color: var(--forest); font-size: 1rem; margin-bottom: .65rem; text-transform: capitalize; }
+      .wealth-card p { color: var(--muted); font-size: .9rem; margin: 0; }
+      .claims { display: grid; gap: 1rem; }
+      .claim { border-left: 3px solid var(--gold); padding-left: 1rem; }
+      .claim p { margin: 0 0 .55rem; }
+      .claim small { color: var(--muted); }
+      .claim a { font-weight: 700; text-decoration: none; }
+      .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .list { margin: 0; padding-left: 1.2rem; }
+      .list li { margin: .7rem 0; }
+      .source-list { display: grid; gap: .65rem; list-style: none; margin: 0; padding: 0; }
+      .source-list li { border-bottom: 1px solid var(--line); padding-bottom: .65rem; }
+      .source-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+      .source-list a { font-weight: 700; text-decoration: none; }
+      .source-list small { color: var(--muted); display: block; overflow-wrap: anywhere; }
+      .warning { background: #fff8df; border-left: 4px solid var(--gold); border-radius: .35rem; color: var(--ink); padding: 1rem 1.2rem; }
+      footer { border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; margin-top: 3rem; padding-top: 1.25rem; }
       code { overflow-wrap: anywhere; }
+      @media (max-width: 800px) {
+        .hero, .two-column { grid-template-columns: 1fr; }
+        .hero { padding-top: 3rem; }
+        .wealth-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 480px) {
+        .shell { padding-inline: 1rem; }
+        .topbar { align-items: flex-start; flex-direction: column; }
+        .wealth-grid { grid-template-columns: 1fr; }
+      }
     </style>
   </head>
   <body>
-    <header>
-      <h1>x402 Watch</h1>
-      <p class="meta">Reviewed public research on x402 and adjacent agent-commerce signals.</p>
-    </header>
-    <main id="app">
-      <p class="warning">No approved public brief has been published yet.</p>
-    </main>
+    <div class="shell">
+      <nav class="topbar" aria-label="Primary">
+        <div class="brand">Human <span>Value</span> Exchange</div>
+        <a href="https://humanvalueexchange.com/" target="_blank" rel="noopener">Visit HVE</a>
+      </nav>
+      <main id="app">
+        <section class="hero">
+          <div>
+            <div class="eyebrow">Research desk · x402 and agent commerce</div>
+            <h1>x402 Watch</h1>
+            <p class="hero-copy">Reviewed public research on the infrastructure, economics, and human implications of machine-to-machine commerce.</p>
+            <div class="status-row" id="status"></div>
+          </div>
+          <div class="hero-note">
+            <strong>Evidence before hype.</strong>
+            Each edition separates verified claims, partial coverage, open questions, and the sources behind the signal.
+          </div>
+        </section>
+        <p class="warning">No approved public brief has been published yet.</p>
+      </main>
+      <footer>Human Value Exchange · Five Wealth lens · x402 Watch</footer>
+    </div>
     <script>
+      const sourceMap = sources => new Map((sources || []).map(source => [source.source_id, source]));
+
+      function addSection(app, title, content, className = "card") {
+        if (!content) return;
+        const section = document.createElement("section");
+        section.className = `section ${className}`;
+        const heading = document.createElement("div");
+        heading.className = "section-heading";
+        const h2 = document.createElement("h2");
+        h2.textContent = title;
+        heading.append(h2);
+        section.append(heading, content);
+        app.append(section);
+      }
+
       async function loadBrief() {
         const app = document.getElementById("app");
         const response = await fetch("data/brief.json", { cache: "no-store" });
         if (!response.ok) return;
         const brief = await response.json();
-        app.innerHTML = "";
-        const title = document.createElement("h2");
-        title.textContent = brief.title;
-        app.append(title);
-        const summary = document.createElement("p");
-        summary.textContent = brief.executive_summary;
-        app.append(summary);
-        const coverage = document.createElement("p");
-        coverage.className = "meta";
-        coverage.textContent = `Coverage: ${brief.coverage} · Run: ${brief.run_id}`;
-        app.append(coverage);
-        for (const section of [
-          ["Claims", brief.claims, claim => {
-            const li = document.createElement("li");
-            li.textContent = claim.claim;
-            return li;
-          }],
-          ["Open questions", brief.open_questions, question => {
-            const li = document.createElement("li");
-            li.textContent = question;
-            return li;
-          }]
-        ]) {
-          if (!section[1] || !section[1].length) continue;
-          const heading = document.createElement("h3");
-          heading.textContent = section[0];
-          app.append(heading);
-          const list = document.createElement("ul");
-          for (const item of section[1]) list.append(section[2](item));
-          app.append(list);
+        app.replaceChildren();
+        const status = document.getElementById("status");
+        status.replaceChildren();
+        for (const label of [`Coverage: ${brief.coverage}`, `Run: ${brief.run_id}`]) {
+          const pill = document.createElement("span");
+          pill.className = "pill";
+          pill.textContent = label;
+          status.append(pill);
         }
-        const sources = document.createElement("h3");
-        sources.textContent = "Sources";
-        app.append(sources);
-        const list = document.createElement("ul");
+
+        const title = document.createElement("p");
+        title.className = "eyebrow";
+        title.textContent = brief.title;
+        const summary = document.createElement("div");
+        summary.className = "summary card";
+        const summaryText = document.createElement("p");
+        summaryText.textContent = brief.executive_summary;
+        summary.append(summaryText);
+        addSection(app, "Executive summary", summary);
+
+        const relevance = document.createElement("div");
+        relevance.className = "relevance card";
+        const relevanceText = document.createElement("p");
+        relevanceText.textContent = brief.x402_relevance;
+        relevance.append(relevanceText);
+        addSection(app, "Why this matters for x402", relevance);
+
+        const wealthGrid = document.createElement("div");
+        wealthGrid.className = "wealth-grid";
+        for (const [wealth, text] of Object.entries(brief.wealth_lens || {})) {
+          const card = document.createElement("article");
+          card.className = "wealth-card";
+          const heading = document.createElement("h3");
+          heading.textContent = wealth;
+          const paragraph = document.createElement("p");
+          paragraph.textContent = text;
+          card.append(heading, paragraph);
+          wealthGrid.append(card);
+        }
+        addSection(app, "The Five Wealth lens", wealthGrid, "");
+
+        const sources = sourceMap(brief.sources);
+        const claims = document.createElement("div");
+        claims.className = "claims";
+        for (const claim of brief.claims || []) {
+          const article = document.createElement("article");
+          article.className = "claim";
+          const paragraph = document.createElement("p");
+          paragraph.textContent = claim.claim;
+          const support = document.createElement("small");
+          support.textContent = claim.support || "Source-linked claim";
+          article.append(paragraph, support);
+          const links = document.createElement("div");
+          for (const sourceId of claim.source_ids || []) {
+            const source = sources.get(sourceId);
+            if (!source || !source.url) continue;
+            const link = document.createElement("a");
+            link.href = source.url;
+            link.target = "_blank";
+            link.rel = "noopener";
+            link.textContent = ` ${source.publisher || sourceId}`;
+            links.append(link);
+          }
+          article.append(links);
+          claims.append(article);
+        }
+        addSection(app, "Signals and claims", claims);
+
+        const twoColumn = document.createElement("div");
+        twoColumn.className = "two-column section";
+        for (const [headingText, items] of [
+          ["Open questions", brief.open_questions],
+          ["Editorial warnings", brief.editorial_warnings]
+        ]) {
+          if (!items || !items.length) continue;
+          const card = document.createElement("section");
+          card.className = "card";
+          const heading = document.createElement("h2");
+          heading.textContent = headingText;
+          const list = document.createElement("ul");
+          list.className = "list";
+          for (const item of items) {
+            const li = document.createElement("li");
+            li.textContent = item;
+            list.append(li);
+          }
+          card.append(heading, list);
+          twoColumn.append(card);
+        }
+        if (twoColumn.children.length) app.append(twoColumn);
+
+        const sourceList = document.createElement("ul");
+        sourceList.className = "source-list";
         for (const source of brief.sources || []) {
-          const li = document.createElement("li");
+          const item = document.createElement("li");
           const link = document.createElement("a");
           link.href = source.url;
           link.textContent = source.publisher || source.url;
           link.target = "_blank";
           link.rel = "noopener";
-          li.append(link);
-          list.append(li);
+          const url = document.createElement("small");
+          url.textContent = source.url;
+          item.append(link, url);
+          sourceList.append(item);
         }
-        app.append(list);
+        addSection(app, "Sources", sourceList);
       }
       loadBrief().catch(() => {});
     </script>
