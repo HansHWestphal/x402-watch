@@ -69,6 +69,13 @@
       .section-heading { align-items: end; display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
       .section-heading h2 { color: var(--forest-dark); font-size: clamp(1.55rem, 3vw, 2.2rem); }
       .section-heading p { color: var(--muted); font-size: .9rem; margin: 0; }
+      .archive-nav { border-top: 5px solid var(--forest); }
+      .archive-nav h2 { color: var(--forest-dark); font-size: 1.25rem; }
+      .archive-nav p { color: var(--muted); margin: .35rem 0 1rem; }
+      .archive-list { display: grid; gap: .45rem; list-style: none; margin: 0; padding: 0; }
+      .archive-list a { display: block; padding: .5rem .65rem; text-decoration: none; }
+      .archive-list a:hover, .archive-list a[aria-current="page"] { background: var(--sage); border-radius: .45rem; }
+      .archive-list small { color: var(--muted); display: block; font-size: .78rem; }
       .card {
         background: var(--paper);
         border: 1px solid var(--line);
@@ -128,6 +135,13 @@
             Each edition separates verified claims, partial coverage, open questions, and the sources behind the signal.
           </div>
         </section>
+        <section class="section archive-nav card" id="edition-nav" aria-labelledby="edition-nav-title">
+          <h2 id="edition-nav-title">Weekly editions</h2>
+          <p>Read the latest signal or return to any published edition.</p>
+          <ul class="archive-list" id="edition-list">
+            <li>Loading editions…</li>
+          </ul>
+        </section>
         <div id="brief-content">
           <p class="warning">No approved public brief has been published yet.</p>
         </div>
@@ -151,15 +165,74 @@
         app.append(section);
       }
 
-      async function loadBrief() {
+      const selectedEdition = new URLSearchParams(window.location.search).get("edition");
+
+      function renderEditionNav(manifest) {
+        const list = document.getElementById("edition-list");
+        list.replaceChildren();
+        const editions = Array.isArray(manifest.editions) ? manifest.editions : [];
+        if (!editions.length) {
+          list.append(Object.assign(document.createElement("li"), {
+            textContent: "No editions have been published yet."
+          }));
+          return;
+        }
+        const latest = document.createElement("li");
+        const latestLink = document.createElement("a");
+        latestLink.href = "./";
+        latestLink.textContent = "Latest edition";
+        if (!selectedEdition) latestLink.setAttribute("aria-current", "page");
+        latest.append(latestLink);
+        list.append(latest);
+        for (const edition of editions) {
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = `?edition=${encodeURIComponent(edition.run_id)}`;
+          link.textContent = edition.title || edition.run_id;
+          if (selectedEdition === edition.run_id) link.setAttribute("aria-current", "page");
+          const metadata = document.createElement("small");
+          metadata.textContent = `${edition.published_at || "Publication date unavailable"} · ${edition.coverage || "unknown"} coverage`;
+          link.append(metadata);
+          item.append(link);
+          list.append(item);
+        }
+      }
+
+      function showLoadError(message) {
+        document.getElementById("brief-content").replaceChildren(
+          Object.assign(document.createElement("p"), {
+            className: "warning",
+            textContent: message
+          })
+        );
+      }
+
+      async function loadBrief(manifest) {
         const app = document.getElementById("brief-content");
-        const response = await fetch("data/brief.json", { cache: "no-store" });
-        if (!response.ok) return;
+        const editions = Array.isArray(manifest.editions) ? manifest.editions : [];
+        const selected = selectedEdition
+          ? editions.find(edition => edition.run_id === selectedEdition)
+          : null;
+        if (selectedEdition && !selected) {
+          showLoadError("That edition could not be found in the publication archive.");
+          return;
+        }
+        const briefPath = selected ? selected.path : "data/brief.json";
+        const response = await fetch(briefPath, { cache: "no-store" });
+        if (!response.ok) {
+          showLoadError("The selected public edition could not be loaded.");
+          return;
+        }
         const brief = await response.json();
         app.replaceChildren();
+        document.title = `${brief.title || "x402 Watch"} | Human Value Exchange`;
         const status = document.getElementById("status");
         status.replaceChildren();
-        for (const label of [`Coverage: ${brief.coverage}`, `Run: ${brief.run_id}`]) {
+        for (const label of [
+          `Coverage: ${brief.coverage}`,
+          `Published: ${brief.publication?.published_at || "Unknown"}`,
+          `Run: ${brief.run_id}`
+        ]) {
           const pill = document.createElement("span");
           pill.className = "pill";
           pill.textContent = label;
@@ -263,7 +336,18 @@
         }
         addSection(app, "Sources", sourceList);
       }
-      loadBrief().catch(() => {});
+      async function loadSite() {
+        const response = await fetch("data/manifest.json", { cache: "no-store" });
+        if (!response.ok) {
+          showLoadError("The publication index could not be loaded.");
+          return;
+        }
+        const manifest = await response.json();
+        renderEditionNav(manifest);
+        await loadBrief(manifest);
+      }
+
+      loadSite().catch(() => showLoadError("The public archive could not be loaded."));
     </script>
   </body>
 </html>
